@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "336504878283",
+    "project_id": "project-rpm-32752",
+    "storage_bucket": "project-rpm-32752.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336504878283:android:51408fc10dbd1f4e21974e",
+        "android_client_info": {
+          "package_name": "com.example.rpm_test2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbHLkLgtPqZ7umQ0YuWrmVMDel1rc8LNc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
