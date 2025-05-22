@@ -4,29 +4,31 @@ import 'package:just_audio/just_audio.dart';
 import 'audio_manager.dart';
 import 'models/song_class.dart';
 import 'voulume _control_page.dart';
-import 'song_class.dart'; // allSongs 리스트 정의된 파일
+import 'package:audio_session/audio_session.dart';
 
-class BpmPlayerPage extends StatefulWidget {
+class BpmMusicPage extends StatefulWidget {
   final int bpm;
   final List<Song> songs;
   final int initialIndex;
 
-  const BpmPlayerPage({
+  const BpmMusicPage({
     Key? key,
+    required this.bpm,
     required this.songs,
     required this.initialIndex,
-    required this.bpm,
   }) : super(key: key);
 
   @override
-  State<BpmPlayerPage> createState() => _BpmPlayerPageState();
+  State<BpmMusicPage> createState() => _BpmMusicPageState();
 }
 
-class _BpmPlayerPageState extends State<BpmPlayerPage> {
+class _BpmMusicPageState extends State<BpmMusicPage> with AutomaticKeepAliveClientMixin {
   late AudioPlayer _audioPlayer;
   AudioPlayer? _clickPlayer;
 
-  int currentIndex = 0;
+  bool get wantKeepAlive => true;
+
+  late int currentIndex;
   bool isPlaying = false;
   double musicVolume = 1.0;
   double metronomeVolume = 0.3;
@@ -34,18 +36,36 @@ class _BpmPlayerPageState extends State<BpmPlayerPage> {
   Duration _position = Duration.zero;
   Timer? _metronomeTimer;
 
-  List<Song> get filteredSongs =>
-      allSongs.where((song) => song.bpm == widget.bpm).toList();
-
-  Song get currentSong => filteredSongs[currentIndex];
+  Song get currentSong => widget.songs[currentIndex];
 
   @override
   void initState() {
     super.initState();
+    currentIndex = widget.initialIndex;
+    _initAudio();
+
     AudioManager.replacePlayer();
     _audioPlayer = AudioManager.player;
     _clickPlayer = AudioPlayer();
     _clickPlayer!.setAsset('assets/audio/metronome.mp3');
+
+    _audioPlayer.playingStream.listen((playing) => setState(() => isPlaying = playing));
+    _audioPlayer.playerStateStream.listen((state) {
+      if (state.processingState == ProcessingState.completed) _playNext();
+    });
+    _audioPlayer.positionStream.listen((pos) => setState(() => _position = pos));
+    _audioPlayer.durationStream.listen((dur) => setState(() => _duration = dur ?? Duration.zero));
+  }
+
+  Future<void> _initAudio() async {
+    final session = await AudioSession.instance;
+    await session.configure(AudioSessionConfiguration.music());
+
+    AudioManager.replacePlayer();
+    _audioPlayer = AudioManager.player;
+    _clickPlayer = AudioPlayer();
+
+    await _clickPlayer!.setAsset('assets/audio/metronome.mp3');
 
     _audioPlayer.playingStream.listen((playing) => setState(() => isPlaying = playing));
     _audioPlayer.playerStateStream.listen((state) {
@@ -63,13 +83,10 @@ class _BpmPlayerPageState extends State<BpmPlayerPage> {
       await _audioPlayer.load();
       await _audioPlayer.setVolume(musicVolume);
       await _audioPlayer.play();
-
-      Future.delayed(const Duration(milliseconds: 100), () {
-        _startMetronome();
-      });
+      _startMetronome();
       setState(() => isPlaying = true);
     } catch (e) {
-      print("🔴 Audio load error: $e");
+      print("\u{1F534} Audio load error: $e");
     }
   }
 
@@ -87,7 +104,7 @@ class _BpmPlayerPageState extends State<BpmPlayerPage> {
   }
 
   Future<void> _playNext() async {
-    if (currentIndex < filteredSongs.length - 1) {
+    if (currentIndex < widget.songs.length - 1) {
       setState(() => currentIndex++);
       await _playAudio();
     }
@@ -95,7 +112,7 @@ class _BpmPlayerPageState extends State<BpmPlayerPage> {
 
   void _startMetronome() {
     _stopMetronome();
-    final bpm = AudioManager.currentBpm;
+    final bpm = widget.bpm;
     if (bpm <= 0) return;
     final intervalMs = (60000 / bpm).round();
     _metronomeTimer = Timer.periodic(
@@ -104,13 +121,31 @@ class _BpmPlayerPageState extends State<BpmPlayerPage> {
     );
   }
 
+  @override
+  void didUpdateWidget(covariant BpmMusicPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final bpmChanged = oldWidget.bpm != widget.bpm;
+    final songsChanged = oldWidget.songs != widget.songs;
+
+    if (songsChanged) {
+      setState(() => currentIndex = 0);
+      WidgetsBinding.instance.addPostFrameCallback((_) => _playAudio());
+    }
+
+    if (bpmChanged) {
+      _stopMetronome();
+      _startMetronome();
+    }
+  }
+
   Future<void> _playMetronomeClick() async {
     try {
       await _clickPlayer!.seek(Duration.zero);
       await _clickPlayer!.setVolume(metronomeVolume);
       await _clickPlayer!.play();
     } catch (e) {
-      print("🔴 Metronome click error: $e");
+      print("\u{1F534} Metronome click error: $e");
     }
   }
 
@@ -135,37 +170,16 @@ class _BpmPlayerPageState extends State<BpmPlayerPage> {
 
   @override
   Widget build(BuildContext context) {
-    final remainingSongs = filteredSongs.sublist(currentIndex + 1);
+    super.build(context);
+    final remainingSongs = widget.songs.sublist(currentIndex + 1);
 
     return Scaffold(
       backgroundColor: const Color(0xFFFF670C),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFFF670C),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            _audioPlayer.stop();
-            _stopMetronome();
-            Navigator.pop(context);
-          },
-        ),
-        title: Row(
-          children: const [
-            Icon(Icons.music_note, color: Colors.black),
-            SizedBox(width: 4),
-            Text("music", style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.w600)),
-          ],
-        ),
-      ),
       body: SafeArea(
         child: Column(
           children: [
             const SizedBox(height: 40),
-            Text(
-              "${currentSong.bpm} BPM",
-              style: const TextStyle(fontSize: 37, fontWeight: FontWeight.bold, color: Colors.black),
-            ),
+            Text("${currentSong.bpm} BPM", style: const TextStyle(fontSize: 37, fontWeight: FontWeight.bold, color: Colors.black)),
             const SizedBox(height: 20),
             const Divider(thickness: 1, color: Colors.black),
             Padding(

@@ -1,55 +1,30 @@
 import 'package:flutter/material.dart';
 import 'models/song_class.dart';
+import 'song_class.dart'; // ✅ allSongs 정의된 파일 (예: song_data.dart)
 import 'BPM_music_player_page.dart';
 import 'countdown_page.dart';
 
-class BpmPlaylistPage extends StatelessWidget {
+class BpmPlaylistPage extends StatefulWidget {
   final int bpm;
 
-  BpmPlaylistPage({required this.bpm});
+  const BpmPlaylistPage({required this.bpm});
 
-  final List<Song> allSongs = [
-    Song(
-      title: "Power",
-      artist: "지드래곤",
-      bpm: 180,
-      audioPath: "assets/audio/power.mp3",
-      imagePath: "assets/images/musicplay.jpg",
-    ),
-    Song(
-      title: "Super Shy",
-      artist: "뉴진스",
-      bpm: 150,
-      audioPath: "assets/audio/Super_Shy.mp3",
-      imagePath: "assets/images/musicplay.jpg",
-    ),
-    Song(
-      title: "Supersonic",
-      artist: "프로미스나인",
-      bpm: 140,
-      audioPath: "assets/audio/Supersonic.mp3",
-      imagePath: "assets/images/musicplay.jpg",
-    ),
-    Song(
-      title: "Love 119",
-      artist: "RIIZE",
-      bpm: 99,
-      audioPath: "assets/audio/love_119.mp3",
-      imagePath: "assets/images/musicplay.jpg",
-    ),
-  ];
+  @override
+  State<BpmPlaylistPage> createState() => _BpmPlaylistPageState();
+}
+
+class _BpmPlaylistPageState extends State<BpmPlaylistPage> {
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    List<Song> filteredSongs = allSongs.where((song) => song.bpm == bpm).toList();
+    List<Song> filteredSongs = allSongs.where((song) => song.bpm == widget.bpm).toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFFFF670C),
       appBar: AppBar(
         backgroundColor: const Color(0xFFFF670C),
         elevation: 0,
-        title: const Text("BPM", style: TextStyle(color: Colors.black)),
-        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
@@ -57,16 +32,22 @@ class BpmPlaylistPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          const SizedBox(height: 12),
-          Text(
-            "$bpm",
-            style: const TextStyle(
-              fontSize: 35,
+          const SizedBox(height: 4),
+          const Text(
+            "BPM",
+            style: TextStyle(
+              fontSize: 45,
               fontWeight: FontWeight.bold,
               color: Colors.black,
+              height: 1.0,
             ),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 2),
+          Text(
+            "${widget.bpm}",
+            style: const TextStyle(fontSize: 80, fontWeight: FontWeight.bold, color: Colors.black),
+          ),
           const Divider(thickness: 2, color: Colors.black),
           Expanded(
             child: Container(
@@ -75,59 +56,86 @@ class BpmPlaylistPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
               child: filteredSongs.isEmpty
                   ? const Center(
-                child: Text(
-                  "해당 BPM의 노래가 없습니다.",
-                  style: TextStyle(color: Colors.black87, fontSize: 18),
-                ),
+                child: Text("해당 BPM의 노래가 없습니다.", style: TextStyle(color: Colors.black87, fontSize: 18)),
               )
-                  : Scrollbar(
-                thumbVisibility: true,
-                child: ListView.builder(
-                  itemCount: filteredSongs.length,
-                  itemBuilder: (context, index) {
-                    final song = filteredSongs[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      child: Container(
-                        color: Colors.grey[200],
-                        child: ListTile(
-                          leading: ClipRRect(
+                  : Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: filteredSongs.length,
+                      itemBuilder: (context, index) {
+                        final song = filteredSongs[index];
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
                             borderRadius: BorderRadius.circular(8),
-                            child: Image.asset(
-                              song.imagePath,
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                            ),
                           ),
-                          title: Text(
-                            song.title,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          subtitle: Text(
-                            "${song.artist} • ${song.bpm} BPM",
-                            style: const TextStyle(color: Colors.black87),
-                          ),
-                          trailing: const Icon(Icons.play_arrow, color: Colors.black),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BpmPlayerPage(
-                                  songs: filteredSongs,
-                                  initialIndex: index,
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(6),
+                                child: Image.asset(
+                                  song.imagePath,
+                                  width: 40,
+                                  height: 40,
+                                  fit: BoxFit.cover,
                                 ),
                               ),
-                            );
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(song.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                                    Text(song.artist, style: const TextStyle(fontSize: 12, color: Colors.black54)),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.play_arrow, color: Colors.black),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => BpmPlayerPage(
+                                        bpm: widget.bpm,
+                                        songs: filteredSongs,
+                                        initialIndex: index,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  if (filteredSongs.length > 1)
+                    Column(
+                      children: [
+                        Slider(
+                          value: currentIndex.toDouble(),
+                          min: 0,
+                          max: (filteredSongs.length - 1).toDouble(),
+                          divisions: filteredSongs.length - 1,
+                          onChanged: (value) {
+                            setState(() {
+                              currentIndex = value.toInt();
+                            });
                           },
                         ),
-                      ),
-                    );
-                  },
-                ),
+                        Text(
+                          "${filteredSongs[currentIndex].title} - ${filteredSongs[currentIndex].artist}",
+                          style: const TextStyle(fontSize: 14, color: Colors.black),
+                        ),
+                      ],
+                    ),
+                ],
               ),
             ),
           ),
@@ -142,16 +150,9 @@ class BpmPlaylistPage extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (_) => CountdownPage(
                       onFinish: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BpmPlayerPage(
-                              songs: filteredSongs,
-                              initialIndex: 0,
-                            ),
-                          ),
-                        );
+                        Navigator.pop(context);
                       },
+                      bpm: widget.bpm,
                     ),
                   ),
                 );
@@ -174,7 +175,7 @@ class BpmPlaylistPage extends StatelessWidget {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

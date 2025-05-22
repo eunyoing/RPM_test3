@@ -14,5 +14,5 @@ class AudioManager {
     _player = AudioPlayer(); // 새 player 생성
   }
 
-  static int currentBpm = 120;
+  static int currentBpm = 140;
 }

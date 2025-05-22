@@ -32,6 +32,8 @@ dependencies:
   flutter:
     sdk: flutter
   just_audio: ^0.9.37
+  audio_session: ^0.1.13
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -70,6 +72,9 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/images/tongtongtong.png
+    - assets/images/tongtongtongBPM.png
+    - assets/images/tongtongtonggoal.png
+    - assets/images/tongtongtong_sound.png
     - assets/images/idol/blackpink.png
     - assets/images/idol/bol4.png
     - assets/images/idol/bts.png

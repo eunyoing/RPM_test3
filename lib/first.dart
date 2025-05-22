@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart'; // flutterfire configure로 생성된 파일
+import 'firebase_options.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

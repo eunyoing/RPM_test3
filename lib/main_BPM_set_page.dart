@@ -6,6 +6,62 @@ import 'sub_BPM_set_page.dart';
 
 class FuncPage extends StatelessWidget {
   const FuncPage({Key? key}) : super(key: key);
+  Widget _buildImageButton({
+    required String imagePath,
+    required String buttonText,
+    required VoidCallback onTap,
+    bool showChallengeTag = false,
+  }) {
+    return Column(
+      children: [
+     ClipRect(
+    child: Image.asset(
+          imagePath,
+          width: 220,
+          height: 220,
+          fit: BoxFit.cover,
+        ),
+     ),
+        const SizedBox(height: 1),
+        Stack(
+          children: [
+            ElevatedButton(
+              onPressed: onTap,
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: Colors.white,
+                minimumSize: const Size(240, 100),
+                padding: const EdgeInsets.symmetric(vertical: 1), // 🔸 내부 여백 줄이기
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              child: Text(
+                buttonText,
+                style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              ),
+            ),
+            if (showChallengeTag)
+              Positioned(
+                top: 15,
+                left: 8,
+                child: Transform.rotate(
+                  angle: -0.7,
+                  child: Text(
+                    '도전!',
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,40 +87,32 @@ class FuncPage extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildButton("BPM 설정", context),
-                  const SizedBox(height: 70),
-                  Stack(
-                    children: [
-                      _buildButton("목표 설정 ", context),
-                      Positioned(
-                        top: 8,    // 버튼 위쪽으로 살짝 올리기
-                        left: -3,   // 버튼 왼쪽으로 살짝 이동
-                        child: Transform.rotate(
-                          angle: -0.7, // 대각선 방향으로 기울이기 (음수는 시계 반대 방향 회전)
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 2,
-                              horizontal: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: const Text(
-                              '도전!',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 23,
-                                color: Colors.red,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                  _buildImageButton(
+                    imagePath: 'assets/images/tongtongtongBPM.png',
+                    buttonText: 'BPM 설정',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const BpmSelectPage()),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  _buildImageButton(
+                    imagePath: 'assets/images/tongtongtonggoal.png',
+                    buttonText: '목표 설정',
+                    showChallengeTag: true,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const GoalRecordPage()),
+                      );
+                    },
                   ),
                 ],
               ),
             ),
+
           ],
         ),
       ),

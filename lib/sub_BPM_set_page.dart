@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'BPM_playlist_page.dart';
+import 'countdown_page.dart';
+import 'BPM_function_1.dart';
 import 'audio_manager.dart';
 import 'first.dart';
 
@@ -13,7 +15,7 @@ class BpmSelectPage extends StatefulWidget {
 }
 
 class _BpmSelectPageState extends State<BpmSelectPage>with RouteAware {
-  int _bpm = 120;
+  int _bpm = 140;
   double _sliderValue = 100;
 
   Timer? _metronomeTimer;
@@ -146,7 +148,7 @@ class _BpmSelectPageState extends State<BpmSelectPage>with RouteAware {
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Row(
               children: [
                 IconButton(
@@ -155,36 +157,44 @@ class _BpmSelectPageState extends State<BpmSelectPage>with RouteAware {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
             const Text(
               'BPM 설정',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+              style: TextStyle(fontSize: 45, fontWeight: FontWeight.bold, color: Colors.black), // 🔹 글자 크기 줄임
             ),
-            const SizedBox(height: 30),
-            const Icon(Icons.monitor_heart, size: 60, color: Colors.black),
-            const SizedBox(height: 20),
+            const SizedBox(height: 50),
+            const Icon(Icons.monitor_heart, size: 150, color: Colors.black), // 🔹 아이콘 크기 줄임
+            const SizedBox(height: 40),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _circleButton(Icons.remove, _decreaseBpm),
+                _circleButton(Icons.remove, _decreaseBpm, size: 36),
                 const SizedBox(width: 20),
                 GestureDetector(
                   onTap: _showBpmInputDialog,
-                  child: Text(
-                    '$_bpm',
-                    style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.black),
+                  child: GestureDetector(
+                    onTap: _showBpmInputDialog,
+                    child: Text(
+                    '  $_bpm  ',
+                    style: const TextStyle(fontSize: 60, fontWeight: FontWeight.bold, color: Colors.black), // 🔹 숫자 크기도 살짝 줄임
+                    ),
                   ),
                 ),
                 const SizedBox(width: 20),
-                _circleButton(Icons.add, _increaseBpm),
+                _circleButton(Icons.add, _increaseBpm, size: 36),
               ],
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 4),
+            const Text(
+              '숫자를 눌러 직접 입력할 수 있어요',
+              style: TextStyle(fontSize: 14, color: Colors.black54),
+            ),
+            const SizedBox(height: 60),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Row(
                 children: [
-                  const Icon(Icons.volume_up, color: Colors.black),
+                  const Icon(Icons.volume_up, color: Colors.black, size: 37), // 🔹 아이콘 크기 줄임
                   Expanded(
                     child: Slider(
                       value: _sliderValue,
@@ -201,32 +211,46 @@ class _BpmSelectPageState extends State<BpmSelectPage>with RouteAware {
                       },
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  // 숫자 제거 or 축소
                   Text(
                     _sliderValue.round().toString(),
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
                 _stopMetronomeLoop(); // 종료 후 이동
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => BpmPlaylistPage(bpm: _bpm)),
+                  // context,
+                  // MaterialPageRoute(
+                  //   builder: (_) => CountdownPage(
+                  //     bpm: _bpm, // ✅ 전달
+                  //     onFinish: () {
+                  //       Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BpmPlaylistPage(bpm: _bpm),
+                            // ✅ 다시 전달
+                          ),
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
                 );
               },
+
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
               ),
               child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 child: Text(
                   '다음',
-                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
+                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 30),
                 ),
               ),
             )
@@ -236,15 +260,15 @@ class _BpmSelectPageState extends State<BpmSelectPage>with RouteAware {
     );
   }
 
-  Widget _circleButton(IconData icon, VoidCallback onPressed) {
+  Widget _circleButton(IconData icon, VoidCallback onPressed, {double size = 40}) {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         shape: const CircleBorder(),
         backgroundColor: Colors.white,
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(10),
       ),
-      child: Icon(icon, color: Colors.black),
+      child: Icon(icon, color: Colors.black, size: size), // 🔹 아이콘 크기 조절
     );
   }
 }

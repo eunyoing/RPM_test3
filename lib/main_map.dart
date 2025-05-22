@@ -15,7 +15,7 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late GoogleMapController mapController;
-  final LatLng _center = const LatLng(37.5665, 126.9780); // 서울 시청
+  final LatLng _center = const LatLng(36.3623, 127.3449); // ✅ 여기!
 
   @override
   void initState() {
@@ -50,7 +50,8 @@ class _MapPageState extends State<MapPage> {
       barrierColor: Colors.black.withOpacity(0.5),
       builder: (_) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14)),
           backgroundColor: Colors.white,
           child: SizedBox(
             width: 300,
@@ -60,14 +61,16 @@ class _MapPageState extends State<MapPage> {
               children: [
                 const Padding(
                   padding: EdgeInsets.only(top: 16, bottom: 4),
-                  child: Text('안내', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  child: Text('안내', style: TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
                 ),
                 const Divider(height: 1, thickness: 1),
                 const Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
                     child: Center(
-                      child: Text('로그인 되었습니다.', textAlign: TextAlign.center, style: TextStyle(fontSize: 16)),
+                      child: Text('로그인 되었습니다.', textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16)),
                     ),
                   ),
                 ),
@@ -75,9 +78,12 @@ class _MapPageState extends State<MapPage> {
                 SizedBox(
                   width: double.infinity,
                   child: TextButton(
-                    style: TextButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 12)),
+                    style: TextButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 12)),
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('확인', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+                    child: const Text('확인', style: TextStyle(fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black)),
                   ),
                 ),
               ],
@@ -99,7 +105,9 @@ class _MapPageState extends State<MapPage> {
         leading: const SizedBox(),
         title: const Text(
           'RPM',
-          style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, fontSize: 24),
+          style: TextStyle(fontWeight: FontWeight.bold,
+              fontStyle: FontStyle.italic,
+              fontSize: 24),
         ),
         centerTitle: true,
         actions: [
@@ -118,7 +126,8 @@ class _MapPageState extends State<MapPage> {
           Expanded(
             child: GoogleMap(
               onMapCreated: _onMapCreated,
-              initialCameraPosition: CameraPosition(target: _center, zoom: 14.0),
+              initialCameraPosition: CameraPosition(
+                  target: _center, zoom: 14.0),
               myLocationEnabled: widget.isLocationAgreed,
               myLocationButtonEnabled: widget.isLocationAgreed,
             ),
@@ -130,12 +139,14 @@ class _MapPageState extends State<MapPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.refresh, color: Colors.black, size: 32),
+                  icon: const Icon(
+                      Icons.refresh, color: Colors.black, size: 32),
                   onPressed: () {},
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const FuncPage()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const FuncPage()));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -143,12 +154,17 @@ class _MapPageState extends State<MapPage> {
                     padding: const EdgeInsets.all(40),
                     elevation: 6,
                   ),
-                  child: const Text("시작", style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold)),
+                  child: const Text("시작", style: TextStyle(color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold)),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.local_fire_department, color: Colors.black, size: 32),
+                  icon: const Icon(
+                      Icons.local_fire_department, color: Colors.black,
+                      size: 32),
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const RecordPage()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const RecordPage()));
                   },
                 ),
               ],
@@ -174,12 +190,15 @@ class _MapPageState extends State<MapPage> {
                 Row(
                   children: const [
                     CircleAvatar(
-                      radius: 24,
+                      radius: 32,
                       backgroundColor: Colors.white,
-                      child: Icon(Icons.headphones, color: Colors.black),
+                      backgroundImage: AssetImage(
+                          'assets/images/tongtongtong.png'), // 이미지 사용
                     ),
                     SizedBox(width: 12),
-                    Text("퉁퉁퉁 사후르", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+                    Text("퉁퉁퉁 사후르", style: TextStyle(fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black)),
                   ],
                 ),
                 IconButton(
@@ -189,7 +208,9 @@ class _MapPageState extends State<MapPage> {
                 )
               ],
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 20),
+            const Divider(thickness: 1, color: Colors.black),
+            const SizedBox(height: 10),
             _buildDrawerButton(Icons.campaign, "공지사항"),
             _buildDrawerButton(Icons.question_answer, "FAQ"),
             _buildDrawerButton(Icons.person_add, "친구 초대"),
@@ -203,18 +224,29 @@ class _MapPageState extends State<MapPage> {
 
   Widget _buildDrawerButton(IconData icon, String label) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-      child: ElevatedButton.icon(
+      padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 10),
+      child: ElevatedButton(
         onPressed: () {},
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
-          minimumSize: const Size(double.infinity, 48),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          minimumSize: const Size(double.infinity, 90),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(40)),
         ),
-        icon: Icon(icon),
-        label: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(icon, size: 32), // ← 아이콘 크기 키움
+            const SizedBox(width: 20), // ← 아이콘과 텍스트 사이 간격
+            Text(
+              label,
+              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
       ),
     );
   }
+
 }

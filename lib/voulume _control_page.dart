@@ -35,13 +35,13 @@ class _VolumeControlPageState extends State<VolumeControlPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/volume_character.png', height: 180), // 귀여운 캐릭터 이미지
+            Image.asset('assets/images/tongtongtong_sound.png', height: 350), // 귀여운 캐릭터 이미지
             const SizedBox(height: 20),
-            const Text(
-              "음악과 메트로놈의\n소리를 조절할 수 있어요.",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
+            // const Text(
+            //   "음악과 메트로놈의\n소리를 조절할 수 있어요.",
+            //   textAlign: TextAlign.center,
+            //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            // ),
             const SizedBox(height: 40),
             _buildSlider("메트로놈", _metronomeVolume, (val) {
               setState(() {
